@@ -293,7 +293,7 @@ const Index = () => {
               />
             </div>
 
-            <IndexChartPanel
+            <FlexibleChartWorkspace
               candleSets={data?.candle_data || []}
               srLevels={data?.support_resistance || []}
               signals={signals}
