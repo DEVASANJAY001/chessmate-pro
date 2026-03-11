@@ -13,6 +13,7 @@ import { EnginePanel } from "@/components/dashboard/EnginePanel";
 import { TradeDashboard } from "@/components/dashboard/TradeDashboard";
 import { SupportResistancePanel } from "@/components/dashboard/SupportResistancePanel";
 import { IndexChartPanel } from "@/components/dashboard/IndexChartPanel";
+import { FlexibleChartWorkspace } from "@/components/dashboard/FlexibleChartWorkspace";
 import { PatternPanel } from "@/components/dashboard/PatternPanel";
 import { OIAnalysisPanel } from "@/components/dashboard/OIAnalysisPanel";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -238,7 +239,7 @@ const Index = () => {
               />
             </div>
 
-            <IndexChartPanel
+            <FlexibleChartWorkspace
               candleSets={data?.candle_data || []}
               srLevels={data?.support_resistance || []}
               signals={signals}
@@ -292,7 +293,7 @@ const Index = () => {
               />
             </div>
 
-            <IndexChartPanel
+            <FlexibleChartWorkspace
               candleSets={data?.candle_data || []}
               srLevels={data?.support_resistance || []}
               signals={signals}
