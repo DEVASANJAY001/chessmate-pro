@@ -44,7 +44,7 @@ export function ChartDrawingOverlay({ width, height, onLinesChange }: ChartDrawi
   const [dragging, setDragging] = useState<{ lineId: string; point: "start" | "end" | "body"; offsetX: number; offsetY: number } | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
 
-  const getMousePos = useCallback((e: React.MouseEvent<SVGSVGElement>) => {
+  const getMousePos = useCallback((e: React.MouseEvent) => {
     const svg = svgRef.current;
     if (!svg) return { x: 0, y: 0 };
     const rect = svg.getBoundingClientRect();
