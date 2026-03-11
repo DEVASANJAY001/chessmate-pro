@@ -1,0 +1,122 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 220 20% 7%;
+    --foreground: 210 20% 92%;
+
+    --card: 220 18% 10%;
+    --card-foreground: 210 20% 92%;
+
+    --popover: 220 18% 10%;
+    --popover-foreground: 210 20% 92%;
+
+    --primary: 142 70% 45%;
+    --primary-foreground: 220 20% 7%;
+
+    --secondary: 220 15% 16%;
+    --secondary-foreground: 210 20% 85%;
+
+    --muted: 220 15% 14%;
+    --muted-foreground: 215 15% 55%;
+
+    --accent: 38 92% 50%;
+    --accent-foreground: 220 20% 7%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 210 20% 98%;
+
+    --border: 220 15% 18%;
+    --input: 220 15% 18%;
+    --ring: 142 70% 45%;
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 220 18% 8%;
+    --sidebar-foreground: 210 20% 92%;
+    --sidebar-primary: 142 70% 45%;
+    --sidebar-primary-foreground: 220 20% 7%;
+    --sidebar-accent: 220 15% 14%;
+    --sidebar-accent-foreground: 210 20% 85%;
+    --sidebar-border: 220 15% 18%;
+    --sidebar-ring: 142 70% 45%;
+
+    /* Custom trading tokens */
+    --success: 142 70% 45%;
+    --warning: 38 92% 50%;
+    --danger: 0 72% 51%;
+    --info: 210 80% 55%;
+    --glow-green: 142 70% 45%;
+    --glow-red: 0 72% 51%;
+  }
+
+  .dark {
+    --background: 220 20% 7%;
+    --foreground: 210 20% 92%;
+    --card: 220 18% 10%;
+    --card-foreground: 210 20% 92%;
+    --popover: 220 18% 10%;
+    --popover-foreground: 210 20% 92%;
+    --primary: 142 70% 45%;
+    --primary-foreground: 220 20% 7%;
+    --secondary: 220 15% 16%;
+    --secondary-foreground: 210 20% 85%;
+    --muted: 220 15% 14%;
+    --muted-foreground: 215 15% 55%;
+    --accent: 38 92% 50%;
+    --accent-foreground: 220 20% 7%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 210 20% 98%;
+    --border: 220 15% 18%;
+    --input: 220 15% 18%;
+    --ring: 142 70% 45%;
+    --sidebar-background: 220 18% 8%;
+    --sidebar-foreground: 210 20% 92%;
+    --sidebar-primary: 142 70% 45%;
+    --sidebar-primary-foreground: 220 20% 7%;
+    --sidebar-accent: 220 15% 14%;
+    --sidebar-accent-foreground: 210 20% 85%;
+    --sidebar-border: 220 15% 18%;
+    --sidebar-ring: 142 70% 45%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 5px hsl(var(--glow-green) / 0.3); }
+  50% { box-shadow: 0 0 20px hsl(var(--glow-green) / 0.6); }
+}
+
+@keyframes burst-flash {
+  0% { background-color: hsl(var(--warning) / 0.0); }
+  50% { background-color: hsl(var(--warning) / 0.15); }
+  100% { background-color: hsl(var(--warning) / 0.0); }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.animate-burst {
+  animation: burst-flash 1.5s ease-in-out infinite;
+}
+
+/* Hide scrollbar for filter rows */
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
