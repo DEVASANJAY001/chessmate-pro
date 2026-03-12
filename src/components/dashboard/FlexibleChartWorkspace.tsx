@@ -3,7 +3,7 @@ import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/componen
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CandleChart } from "./CandleChart";
+import { TradingViewChart } from "./TradingViewChart";
 import { AIPatternAnalysis } from "./AIPatternAnalysis";
 import { ChartDrawingOverlay } from "./ChartDrawingOverlay";
 import { useAlertSound } from "@/hooks/useAlertSound";
@@ -11,8 +11,9 @@ import {
   BarChart3, Maximize2, Minimize2, Brain, Eye, EyeOff,
   ArrowUpDown, ArrowLeftRight, RotateCcw, Volume2, VolumeX,
   Pencil, Grid3X3, LayoutGrid, Columns2, Rows2,
-  GripHorizontal, Move, ChevronDown, ChevronUp,
+  GripHorizontal, Move, ChevronDown, ChevronUp, Tv
 } from "lucide-react";
+import { MiniChartWindow } from "./MiniChartWindow";
 import type { CandleSet, SupportResistanceLevel, Signal, ChartPattern, CandlestickPattern } from "@/types/scanner";
 
 interface FlexibleChartWorkspaceProps {
@@ -39,8 +40,22 @@ export function FlexibleChartWorkspace({
   const [showDrawing, setShowDrawing] = useState(false);
   const [focusedPanel, setFocusedPanel] = useState<number | null>(null);
   const [aiPatterns, setAiPatterns] = useState<ChartPattern[]>([]);
-  const [toolbarCollapsed, setToolbarCollapsed] = useState(false);
+  const [toolbarCollapsed, setToolbarCollapsed] = useState(window.innerWidth < 768);
+  const [showMiniChart, setShowMiniChart] = useState(false);
   const chartContainerRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  // Force single layout on mobile
+  useEffect(() => {
+    const handleInitialLayout = () => {
+      if (window.innerWidth < 768) {
+        setLayout("single");
+        setToolbarCollapsed(true);
+      }
+    };
+    handleInitialLayout();
+    window.addEventListener('resize', handleInitialLayout);
+    return () => window.removeEventListener('resize', handleInitialLayout);
+  }, []);
 
   const { soundEnabled, toggleSound, playPatternAlert } = useAlertSound();
 
@@ -52,17 +67,17 @@ export function FlexibleChartWorkspace({
 
   const getChartData = (tf: Timeframe) => {
     const candleSet = candleSets.find(cs => cs.timeframe === tf);
-    const tfSR = showSR ? srLevels.filter(l => l.timeframe === tf) : [];
+    const tfSR = showSR ? srLevels : []; // Show all major levels on all timeframes
     const tfSignals = showSignals ? signals : [];
-    const tfChartPatterns = showPatterns && tf === "5min" ? [...chartPatterns, ...aiPatterns] : (showPatterns ? aiPatterns : []);
-    const tfCandlePatterns = showPatterns && tf === "5min" ? candlestickPatterns : [];
+    const tfChartPatterns = showPatterns ? [...chartPatterns, ...aiPatterns] : [];
+    const tfCandlePatterns = showPatterns ? candlestickPatterns : [];
     return { candleSet, tfSR, tfSignals, tfChartPatterns, tfCandlePatterns };
   };
 
   const handleAIPatterns = (patterns: ChartPattern[]) => {
     setAiPatterns(patterns);
     setShowPatterns(true);
-    
+
     // Play sound alert for detected patterns
     if (patterns.length > 0) {
       const primaryBias = patterns[0].bias;
@@ -97,9 +112,8 @@ export function FlexibleChartWorkspace({
                     newTfs[index] = t.value;
                     setTimeframes(newTfs);
                   }}
-                  className={`px-1.5 py-0.5 text-[8px] font-medium rounded transition-colors ${
-                    tf === t.value ? "bg-primary/20 text-primary" : "text-muted-foreground hover:text-foreground"
-                  }`}
+                  className={`px-1.5 py-0.5 text-[8px] font-medium rounded transition-colors ${tf === t.value ? "bg-primary/20 text-primary" : "text-muted-foreground hover:text-foreground"
+                    }`}
                 >
                   {t.label}
                 </button>
@@ -119,7 +133,7 @@ export function FlexibleChartWorkspace({
         <div className="flex-1 min-h-0 p-1 relative">
           {candleSet && candleSet.candles.length > 0 ? (
             <>
-              <CandleChart
+              <TradingViewChart
                 candles={candleSet.candles}
                 srLevels={tfSR}
                 signals={tfSignals}
@@ -206,6 +220,14 @@ export function FlexibleChartWorkspace({
                 AI Detect
               </Button>
               <Button
+                variant={showMiniChart ? "secondary" : "ghost"} size="sm"
+                className={`h-6 px-2 text-[9px] gap-1 ${showMiniChart ? "text-primary border-primary/30" : ""}`}
+                onClick={() => setShowMiniChart(!showMiniChart)}
+              >
+                <Tv className="h-3 w-3" />
+                Mini TV
+              </Button>
+              <Button
                 variant="ghost" size="sm"
                 className="h-6 w-6 p-0"
                 onClick={toggleSound}
@@ -225,9 +247,8 @@ export function FlexibleChartWorkspace({
                   <button
                     key={l.value}
                     onClick={() => setLayout(l.value)}
-                    className={`px-1.5 py-0.5 rounded transition-colors flex items-center gap-0.5 ${
-                      layout === l.value ? "bg-primary/20 text-primary" : "text-muted-foreground hover:text-foreground"
-                    }`}
+                    className={`px-1.5 py-0.5 rounded transition-colors flex items-center gap-0.5 ${layout === l.value ? "bg-primary/20 text-primary" : "text-muted-foreground hover:text-foreground"
+                      }`}
                     title={l.label}
                   >
                     {l.icon}
@@ -285,9 +306,8 @@ export function FlexibleChartWorkspace({
                 <Badge
                   key={i}
                   variant="outline"
-                  className={`text-[8px] px-1 py-0 ${
-                    p.bias === "BULLISH" ? "border-success/30 text-success" : "border-danger/30 text-danger"
-                  }`}
+                  className={`text-[8px] px-1 py-0 ${p.bias === "BULLISH" ? "border-success/30 text-success" : "border-danger/30 text-danger"
+                    }`}
                 >
                   {p.type.replace(/_/g, " ")} {p.confidence}%
                 </Badge>
@@ -421,6 +441,14 @@ export function FlexibleChartWorkspace({
                 </ResizablePanelGroup>
               </ResizablePanel>
             </ResizablePanelGroup>
+          )}
+
+          {showMiniChart && (
+            <div className="absolute top-12 right-4 inset-0 pointer-events-none z-[100]">
+              <div className="pointer-events-auto">
+                <MiniChartWindow onClose={() => setShowMiniChart(false)} />
+              </div>
+            </div>
           )}
         </CardContent>
       </Card>

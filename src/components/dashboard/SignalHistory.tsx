@@ -61,7 +61,7 @@ Trade disciplined.`;
     }
 
     fetchTodaySignals();
-    const interval = setInterval(fetchTodaySignals, 10000);
+    const interval = setInterval(fetchTodaySignals, 1000);
     return () => clearInterval(interval);
   }, []);
 

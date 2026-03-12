@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { CandleChart } from "./CandleChart";
+import { TradingViewChart } from "./TradingViewChart";
 import { Loader2 } from "lucide-react";
 import type { CandleData, SupportResistanceLevel } from "@/types/scanner";
 
@@ -120,9 +120,8 @@ export function ContractChart({ instrumentToken, tradingSymbol, strike, spotPric
             <button
               key={tf.value}
               onClick={(e) => { e.stopPropagation(); setTimeframe(tf.value); }}
-              className={`px-1.5 py-0.5 text-[9px] font-medium rounded transition-colors ${
-                timeframe === tf.value ? "bg-primary/20 text-primary" : "text-muted-foreground hover:text-foreground"
-              }`}
+              className={`px-1.5 py-0.5 text-[9px] font-medium rounded transition-colors ${timeframe === tf.value ? "bg-primary/20 text-primary" : "text-muted-foreground hover:text-foreground"
+                }`}
             >
               {tf.label}
             </button>
@@ -139,7 +138,7 @@ export function ContractChart({ instrumentToken, tradingSymbol, strike, spotPric
           No candle data available
         </div>
       ) : (
-        <CandleChart
+        <TradingViewChart
           candles={candles}
           srLevels={srLevels}
           signals={[]}

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect, Fragment } from "react";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
@@ -9,6 +9,30 @@ import { ContractChart } from "./ContractChart";
 
 interface ContractsTableProps {
   contracts: OptionContract[];
+}
+
+function LTPCell({ ltp, tradingSymbol }: { ltp: number, tradingSymbol: string }) {
+  const [flash, setFlash] = useState<"up" | "down" | null>(null);
+  const prevPrice = useRef(ltp);
+
+  useEffect(() => {
+    if (ltp !== prevPrice.current && ltp > 0 && prevPrice.current > 0) {
+      setFlash(ltp > prevPrice.current ? "up" : "down");
+      const timer = setTimeout(() => setFlash(null), 800);
+      prevPrice.current = ltp;
+      return () => clearTimeout(timer);
+    }
+    prevPrice.current = ltp;
+  }, [ltp]);
+
+  return (
+    <TableCell className={`text-xs text-right tabular-nums font-medium transition-colors duration-300 ${flash === "up" ? "text-success" :
+      flash === "down" ? "text-danger" :
+        "text-foreground"
+      }`}>
+      ₹{ltp.toFixed(2)}
+    </TableCell>
+  );
 }
 
 function calcTargets(ltp: number) {
@@ -43,7 +67,9 @@ export function ContractsTable({ contracts }: ContractsTableProps) {
 
   return (
     <div className="overflow-auto">
-      <Table>
+      <div className="w-full overflow-x-auto scrollbar-none no-scrollbar">
+      <div className="min-w-[600px] w-full">
+        <Table>
         <TableHeader>
           <TableRow className="border-border hover:bg-transparent">
             <TableHead className="text-[10px] uppercase tracking-wider text-muted-foreground w-6"></TableHead>
@@ -65,15 +91,14 @@ export function ContractsTable({ contracts }: ContractsTableProps) {
               c.confidence >= 75
                 ? "text-success"
                 : c.confidence >= 50
-                ? "text-warning"
-                : "text-danger";
+                  ? "text-warning"
+                  : "text-danger";
             const isExpanded = expandedRow === c.trading_symbol;
             const t = calcTargets(c.ltp);
 
             return (
-              <>
+              <Fragment key={c.trading_symbol}>
                 <TableRow
-                  key={c.trading_symbol}
                   className={`border-border/50 cursor-pointer hover:bg-secondary/50 ${c.volume_burst ? "animate-burst" : ""}`}
                   onClick={() => setExpandedRow(isExpanded ? null : c.trading_symbol)}
                 >
@@ -86,11 +111,10 @@ export function ContractsTable({ contracts }: ContractsTableProps) {
                   <TableCell className="text-center">
                     <Badge
                       variant="outline"
-                      className={`text-[10px] ${
-                        c.option_type === "CE"
-                          ? "border-success/40 text-success"
-                          : "border-danger/40 text-danger"
-                      }`}
+                      className={`text-[10px] ${c.option_type === "CE"
+                        ? "border-success/40 text-success"
+                        : "border-danger/40 text-danger"
+                        }`}
                     >
                       {c.option_type}
                     </Badge>
@@ -170,11 +194,13 @@ export function ContractsTable({ contracts }: ContractsTableProps) {
                     </TableCell>
                   </TableRow>
                 )}
-              </>
+              </Fragment>
             );
           })}
         </TableBody>
       </Table>
+        </div>
+      </div>
     </div>
   );
 }

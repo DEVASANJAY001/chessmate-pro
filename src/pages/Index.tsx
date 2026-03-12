@@ -24,6 +24,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Settings, LayoutDashboard, Loader2, Flame, Filter, BarChart3, Brain, CalendarIcon } from "lucide-react";
 import type { IndexType, ScanMode, OptionContract } from "@/types/scanner";
 import { format } from "date-fns";
+import { correlateTimeframes, predictScalpMove, generateScalpSignals } from "@/lib/analysis";
 
 type OptionFilter = "ALL" | "CE" | "PE";
 type SortBy = "confidence" | "volume" | "oi" | "ltp" | "hero_score";
@@ -38,8 +39,27 @@ const Index = () => {
 
   const { data, loading, error, lastUpdate, isCached } = useScanner(indexType, expiry || undefined, mode);
 
+  const nLayerStatus = useMemo(() => {
+    if (!data?.candle_data) return null;
+    return correlateTimeframes(data.candle_data);
+  }, [data?.candle_data]);
+
+  const prediction = useMemo(() => {
+    if (!data?.candle_data) return undefined;
+    const fiveMin = data.candle_data.find(cs => cs.timeframe === "5min");
+    if (!fiveMin?.candles?.length) return undefined;
+    return predictScalpMove(fiveMin.candles, data.support_resistance || []);
+  }, [data?.candle_data, data?.support_resistance]);
+
+  const integratedSignals = useMemo(() => {
+    if (!data?.candle_data || !prediction) return data?.signals || [];
+    const fiveMin = data.candle_data.find(cs => cs.timeframe === "5min");
+    if (!fiveMin?.candles?.length) return data?.signals || [];
+    return generateScalpSignals(fiveMin.candles, prediction);
+  }, [data?.candle_data, prediction, data?.signals]);
+
   const rawContracts = data?.contracts || [];
-  const signals = data?.signals || [];
+  const signals = integratedSignals;
   const spotPrice = (indexType === "SENSEX" ? data?.sensex_price : data?.nifty_price) || 0;
   const expiryDates = data?.expiry_dates || [];
 
@@ -70,16 +90,18 @@ const Index = () => {
         maxPain={data?.max_pain}
         selectedExpiry={data?.selected_expiry}
         isCached={isCached}
+        nLayerStatus={nLayerStatus}
+        prediction={prediction}
       />
 
       {/* Nav + Filters */}
       <div className="flex flex-col gap-2 px-3 py-2 border-b border-border">
         {/* Tab Row */}
-        <div className="flex gap-1">
+        <div className="flex gap-1 overflow-x-auto pb-1 scrollbar-none no-scrollbar">
           <Button
             variant={activeTab === "dashboard" ? "secondary" : "ghost"}
             size="sm"
-            className="text-[11px] gap-1 h-7 px-2.5"
+            className="text-[10px] gap-1 h-7 px-2.5 flex-shrink-0"
             onClick={() => { setActiveTab("dashboard"); setSortBy("confidence"); }}
           >
             <LayoutDashboard className="h-3 w-3" />
@@ -88,7 +110,7 @@ const Index = () => {
           <Button
             variant={activeTab === "herozero" ? "secondary" : "ghost"}
             size="sm"
-            className="text-[11px] gap-1 h-7 px-2.5"
+            className="text-[10px] gap-1 h-7 px-2.5 flex-shrink-0"
             onClick={() => { setActiveTab("herozero"); setSortBy("hero_score"); }}
           >
             <Flame className="h-3 w-3" />
@@ -97,7 +119,7 @@ const Index = () => {
           <Button
             variant={activeTab === "engine" ? "secondary" : "ghost"}
             size="sm"
-            className="text-[11px] gap-1 h-7 px-2.5"
+            className="text-[10px] gap-1 h-7 px-2.5 flex-shrink-0"
             onClick={() => setActiveTab("engine")}
           >
             <Brain className="h-3 w-3" />
@@ -106,16 +128,16 @@ const Index = () => {
           <Button
             variant={activeTab === "trades" ? "secondary" : "ghost"}
             size="sm"
-            className="text-[11px] gap-1 h-7 px-2.5"
+            className="text-[10px] gap-1 h-7 px-2.5 flex-shrink-0"
             onClick={() => setActiveTab("trades")}
           >
             <BarChart3 className="h-3 w-3" />
-            Dashboard
+            Trades
           </Button>
           <Button
             variant={activeTab === "settings" ? "secondary" : "ghost"}
             size="sm"
-            className="text-[11px] gap-1 h-7 px-2.5"
+            className="text-[10px] gap-1 h-7 px-2.5 flex-shrink-0"
             onClick={() => setActiveTab("settings")}
           >
             <Settings className="h-3 w-3" />
@@ -128,7 +150,7 @@ const Index = () => {
           <div className="flex items-center gap-1.5 flex-wrap">
             {/* Index */}
             <Select value={indexType} onValueChange={(v) => { setIndexType(v as IndexType); setExpiry(""); }}>
-              <SelectTrigger className="w-[90px] h-7 text-[11px] bg-secondary border-border">
+              <SelectTrigger className="w-[85px] h-7 text-[10px] bg-secondary border-border px-1.5 font-bold">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent className="bg-popover border-border z-50">
@@ -140,9 +162,9 @@ const Index = () => {
             {/* Expiry Calendar Picker */}
             <Popover>
               <PopoverTrigger asChild>
-                <Button variant="outline" size="sm" className="h-7 text-[11px] gap-1 bg-secondary border-border px-2">
+                <Button variant="outline" size="sm" className="h-7 text-[10px] gap-1 bg-secondary border-border px-1.5">
                   <CalendarIcon className="h-3 w-3" />
-                  {expiry ? format(new Date(expiry + "T00:00:00"), "dd MMM yy") : "Next Expiry"}
+                  {expiry ? format(new Date(expiry + "T00:00:00"), "dd MMM") : "Expiry"}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0 bg-popover border-border z-50" align="start">

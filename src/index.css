@@ -13,43 +13,44 @@
     --popover: 220 18% 10%;
     --popover-foreground: 210 20% 92%;
 
-    --primary: 142 70% 45%;
+    --primary: 142 60% 45%;
     --primary-foreground: 220 20% 7%;
 
-    --secondary: 220 15% 16%;
+    --secondary: 220 16% 16%;
     --secondary-foreground: 210 20% 85%;
 
-    --muted: 220 15% 14%;
-    --muted-foreground: 215 15% 55%;
+    --muted: 220 14% 14%;
+    --muted-foreground: 215 14% 55%;
 
-    --accent: 38 92% 50%;
-    --accent-foreground: 220 20% 7%;
+    --accent: 220 16% 16%;
+    --accent-foreground: 210 20% 92%;
 
-    --destructive: 0 72% 51%;
-    --destructive-foreground: 210 20% 98%;
+    --chart-green: 142 60% 45%;
+    --chart-red: 0 72% 55%;
 
-    --border: 220 15% 18%;
-    --input: 220 15% 18%;
-    --ring: 142 70% 45%;
+    --destructive: 0 72% 55%;
+    --destructive-foreground: 210 20% 92%;
+
+    --border: 220 14% 18%;
+    --input: 220 14% 18%;
+    --ring: 142 60% 45%;
 
     --radius: 0.5rem;
 
-    --sidebar-background: 220 18% 8%;
+    --sidebar-background: 220 18% 10%;
     --sidebar-foreground: 210 20% 92%;
-    --sidebar-primary: 142 70% 45%;
+    --sidebar-primary: 210 20% 92%;
     --sidebar-primary-foreground: 220 20% 7%;
-    --sidebar-accent: 220 15% 14%;
-    --sidebar-accent-foreground: 210 20% 85%;
-    --sidebar-border: 220 15% 18%;
-    --sidebar-ring: 142 70% 45%;
+    --sidebar-accent: 220 16% 16%;
+    --sidebar-accent-foreground: 210 20% 92%;
+    --sidebar-border: 220 14% 18%;
+    --sidebar-ring: 142 60% 45%;
 
     /* Custom trading tokens */
-    --success: 142 70% 45%;
+    --success: 142 60% 45%;
     --warning: 38 92% 50%;
-    --danger: 0 72% 51%;
+    --danger: 0 72% 55%;
     --info: 210 80% 55%;
-    --glow-green: 142 70% 45%;
-    --glow-red: 0 72% 51%;
   }
 
   .dark {
@@ -59,27 +60,19 @@
     --card-foreground: 210 20% 92%;
     --popover: 220 18% 10%;
     --popover-foreground: 210 20% 92%;
-    --primary: 142 70% 45%;
+    --primary: 142 60% 45%;
     --primary-foreground: 220 20% 7%;
-    --secondary: 220 15% 16%;
+    --secondary: 220 16% 16%;
     --secondary-foreground: 210 20% 85%;
-    --muted: 220 15% 14%;
-    --muted-foreground: 215 15% 55%;
-    --accent: 38 92% 50%;
-    --accent-foreground: 220 20% 7%;
-    --destructive: 0 72% 51%;
-    --destructive-foreground: 210 20% 98%;
-    --border: 220 15% 18%;
-    --input: 220 15% 18%;
-    --ring: 142 70% 45%;
-    --sidebar-background: 220 18% 8%;
-    --sidebar-foreground: 210 20% 92%;
-    --sidebar-primary: 142 70% 45%;
-    --sidebar-primary-foreground: 220 20% 7%;
-    --sidebar-accent: 220 15% 14%;
-    --sidebar-accent-foreground: 210 20% 85%;
-    --sidebar-border: 220 15% 18%;
-    --sidebar-ring: 142 70% 45%;
+    --muted: 220 14% 14%;
+    --muted-foreground: 215 14% 55%;
+    --accent: 220 16% 16%;
+    --accent-foreground: 210 20% 92%;
+    --destructive: 0 72% 55%;
+    --destructive-foreground: 210 20% 92%;
+    --border: 220 14% 18%;
+    --input: 220 14% 18%;
+    --ring: 142 60% 45%;
   }
 }
 
@@ -94,8 +87,8 @@
 }
 
 @keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 5px hsl(var(--glow-green) / 0.3); }
-  50% { box-shadow: 0 0 20px hsl(var(--glow-green) / 0.6); }
+  0%, 100% { box-shadow: 0 0 5px hsl(var(--success) / 0.3); }
+  50% { box-shadow: 0 0 20px hsl(var(--success) / 0.6); }
 }
 
 @keyframes burst-flash {
@@ -112,7 +105,6 @@
   animation: burst-flash 1.5s ease-in-out infinite;
 }
 
-/* Hide scrollbar for filter rows */
 .scrollbar-none {
   -ms-overflow-style: none;
   scrollbar-width: none;

@@ -40,13 +40,17 @@ export interface Signal {
   trading_symbol: string;
   strike: number;
   option_type: string;
+  type: "BUY" | "SELL";
   entry_price: number;
   stop_loss: number;
+  price: number; // Added price
   target1: number;
   target2: number;
   target3: number;
   confidence: number;
   reason: string;
+  timestamp: string;
+  pattern_id?: string;
   created_at: string;
 }
 
@@ -72,20 +76,47 @@ export interface CandleSet {
 }
 
 export interface ChartPattern {
-  type: "double_top" | "double_bottom" | "ascending_triangle" | "descending_triangle" | "bull_flag" | "bear_flag" | "head_and_shoulders" | "inverse_head_and_shoulders";
+  type:
+  | "head_and_shoulders" | "inverse_head_and_shoulders" | "double_top" | "double_bottom"
+  | "triple_top" | "triple_bottom" | "rounding_top" | "rounding_bottom"
+  | "diamond_top" | "diamond_bottom"
+  | "bull_flag" | "bear_flag" | "bull_pennant" | "bear_pennant"
+  | "ascending_triangle" | "descending_triangle" | "symmetrical_triangle"
+  | "rectangle" | "cup_and_handle" | "inverted_cup_and_handle"
+  | "rising_wedge" | "falling_wedge" | "expanding_wedge"
+  | "ascending_channel" | "descending_channel" | "horizontal_channel"
+  | "broadening_formation" | "megaphone" | "vcp"
+  | "gartley" | "butterfly" | "bat" | "crab" | "shark" | "cypher"
+  | "hh_hl" | "lh_ll" | "bos" | "choch" | "liquidity_sweep" | "breakout_retest";
   confidence: number;
-  start_index: number;
-  end_index: number;
+  points: { index: number; price: number }[];
+  label: string;
+  color?: string;
   description: string;
-  bias: "BULLISH" | "BEARISH";
+  bias: "BULLISH" | "BEARISH" | "NEUTRAL";
 }
 
 export interface CandlestickPattern {
   index: number;
   timestamp: string;
-  type: "hammer" | "inverted_hammer" | "bullish_engulfing" | "bearish_engulfing" | "doji" | "shooting_star" | "morning_star" | "evening_star";
+  type:
+  | "doji" | "hammer" | "shooting_star" | "bullish_engulfing" | "bearish_engulfing"
+  | "morning_star" | "evening_star" | "harami" | "piercing_line"
+  | "dark_cloud_cover" | "three_white_soldiers" | "three_black_rows";
   bias: "BULLISH" | "BEARISH" | "NEUTRAL";
   description: string;
+}
+
+export interface PredictionResult {
+  next_move: "UP" | "DOWN" | "SIDEWAYS";
+  confidence: number;
+  reason: string;
+  layers: {
+    structure: string;
+    patterns: string;
+    candles: string;
+    indicators: string;
+  };
 }
 
 export interface OIAnalysis {
@@ -126,7 +157,6 @@ export interface ScannerResponse {
   support_resistance?: SupportResistanceLevel[];
   candle_data?: CandleSet[];
   chart_patterns?: ChartPattern[];
-  candlestick_patterns?: CandlestickPattern[];
   oi_analysis?: OIAnalysis[];
   strike_sr?: StrikeSR[];
 }

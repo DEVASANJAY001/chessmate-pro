@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { ScannerResponse, IndexType, ScanMode } from "@/types/scanner";
 
-const POLL_INTERVAL = 2000;
+const POLL_INTERVAL = 1000;
 
 function isMarketOpen(): boolean {
   const ist = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
