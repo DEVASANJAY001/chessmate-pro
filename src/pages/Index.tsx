@@ -181,7 +181,7 @@ const Index = () => {
                       setExpiry("");
                     }
                   }}
-                  disabled={(date) => date < new Date(new Date().setHours(0,0,0,0))}
+                  disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
                   initialFocus
                 />
                 {expiry && (
@@ -200,11 +200,10 @@ const Index = () => {
                 <button
                   key={f}
                   onClick={() => setOptionFilter(f)}
-                  className={`px-2 py-0.5 text-[10px] font-medium rounded transition-colors ${
-                    optionFilter === f
+                  className={`px-2 py-0.5 text-[10px] font-medium rounded transition-colors ${optionFilter === f
                       ? f === "CE" ? "bg-success/20 text-success" : f === "PE" ? "bg-danger/20 text-danger" : "bg-primary/20 text-primary"
                       : "text-muted-foreground hover:text-foreground"
-                  }`}
+                    }`}
                 >
                   {f}
                 </button>
